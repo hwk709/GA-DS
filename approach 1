@@ -1,0 +1,80 @@
+Let's break this into two key parts:
+
+Visualize the Forecasts for both Gradient Boosting and K-Nearest Neighbors (KNN).
+Generate a DataFrame of predictions to append back to the original dataset so it can be used in a Qlik app.
+Step 1: Visualizing Forecasts for Both Models
+We'll generate visualizations comparing the actual values of requirement with the predicted values from both Gradient Boosting and KNN.
+
+Gradient Boosting Visualization:
+python
+Copy code
+import matplotlib.pyplot as plt
+
+# Plotting the Gradient Boosting Regressor results
+plt.figure(figsize=(10, 6))
+plt.plot(y_test_L5.values, label='Actual Requirement', marker='o')
+plt.plot(y_pred_L5, label='Predicted Requirement (Gradient Boosting)', marker='x')
+plt.title('L5 Gradient Boosting: Actual vs Predicted Requirement')
+plt.xlabel('Test Data Points')
+plt.ylabel('Requirement')
+plt.legend()
+plt.grid(True)
+plt.show()
+KNN Visualization:
+python
+Copy code
+# Plotting the KNN Regressor results
+plt.figure(figsize=(10, 6))
+plt.plot(y_test_L5.values, label='Actual Requirement', marker='o')
+plt.plot(y_pred_knn_L5, label='Predicted Requirement (KNN)', marker='x')
+plt.title('L5 KNN: Actual vs Predicted Requirement')
+plt.xlabel('Test Data Points')
+plt.ylabel('Requirement')
+plt.legend()
+plt.grid(True)
+plt.show()
+Step 2: Generate a DataFrame to Append Back to the Original Dataset
+We will now generate a DataFrame that includes the original data along with the predictions from both models. This can be exported or used in a Qlik app.
+
+Create a DataFrame with Predictions:
+python
+Copy code
+# Create a DataFrame with actual and predicted values for Gradient Boosting and KNN
+predictions_df = pd.DataFrame({
+    'year': X_test_L5['year'],  # Assuming 'year' is one of your features
+    'actual_requirement': y_test_L5,
+    'predicted_requirement_gbr': y_pred_L5,
+    'predicted_requirement_knn': y_pred_knn_L5
+})
+
+# Reset the index to properly append to the original dataset
+predictions_df.reset_index(drop=True, inplace=True)
+
+# Append predictions back to the original dataset (on the test data points)
+original_with_predictions = data.copy()
+original_with_predictions = original_with_predictions.merge(predictions_df, on='year', how='left')
+
+# Display the DataFrame with predictions
+print(original_with_predictions.head())
+Example Output:
+This will produce a DataFrame with the original features and the new columns for predicted values from both models.
+
+year	funding_level	L1_total_requirement	L2_total_requirement	L5_total_requirement	program_code_encoded	program_code_0	program_code_1	actual_requirement	predicted_requirement_gbr	predicted_requirement_knn
+2020	1000	10000	5000	2000	0	1	0	2000	2020	2015
+2021	1100	11000	5500	2200	0	1	0	2200	2210	2205
+Step 3: Prepare for Export to Qlik App
+To use this in a Qlik app, you can save the merged DataFrame (which now contains the predictions) to a CSV file or any other format that Qlik can read.
+
+Export the DataFrame:
+python
+Copy code
+# Save the DataFrame with predictions to a CSV for Qlik
+original_with_predictions.to_csv('L5_predictions.csv', index=False)
+This file can now be imported into Qlik for further analysis or visualization.
+
+Summary:
+We generated visualizations for both the Gradient Boosting and KNN models.
+Created a new DataFrame with both actual and predicted values from both models.
+The DataFrame was merged back into the original dataset to maintain context for the Qlik app.
+Finally, we exported the DataFrame to a CSV file, ready for use in Qlik.
+Would you like additional customizations for the Qlik integration or further improvements on the visualizations?
