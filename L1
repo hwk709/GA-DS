@@ -1,0 +1,83 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from prophet import Prophet
+from sklearn.linear_model import LinearRegression
+import numpy as np
+
+# Sample dataset
+data = pd.DataFrame({
+    'year': [2020, 2021, 2022, 2023],
+    'requirement': [1000, 1100, 1200, 1300]
+})
+
+# Convert 'year' to datetime format
+data['ds'] = pd.to_datetime(data['year'], format='%Y')
+data['y'] = data['requirement']
+
+# ---- EDA ----
+
+# 1. Time series plot
+plt.figure(figsize=(10, 6))
+plt.plot(data['ds'], data['y'], marker='o')
+plt.title('Time Series Plot: Requirement Over Time')
+plt.xlabel('Year')
+plt.ylabel('Requirement')
+plt.grid(True)
+plt.show()
+
+# 2. Stationarity Test (ADF test)
+result = adfuller(data['y'])
+print('ADF Statistic:', result[0])
+print('p-value:', result[1])
+if result[1] < 0.05:
+    print("The data is stationary.")
+else:
+    print("The data is non-stationary.")
+
+# 3. Autocorrelation (ACF) and Partial Autocorrelation (PACF)
+fig, axes = plt.subplots(1, 2, figsize=(16, 6))
+plot_acf(data['y'], ax=axes[0])
+plot_pacf(data['y'], ax=axes[1])
+plt.show()
+
+# ---- Modeling Approach ----
+
+# Prophet Model
+prophet_df = data[['ds', 'y']]  # Prophet requires 'ds' for dates and 'y' for values
+model_prophet = Prophet()
+model_prophet.fit(prophet_df)
+
+# Make future predictions for the next 5 years
+future = model_prophet.make_future_dataframe(periods=5, freq='Y')
+forecast = model_prophet.predict(future)
+
+# Plot Prophet forecast
+model_prophet.plot(forecast)
+plt.title('Prophet Forecast')
+plt.show()
+
+# ---- Linear Regression ----
+# Linear regression to predict future values
+X = np.array(data['year']).reshape(-1, 1)  # Independent variable: Year
+y = data['y']  # Dependent variable: Requirement
+
+# Fit the linear regression model
+linear_model = LinearRegression()
+linear_model.fit(X, y)
+
+# Predict for the next 5 years
+future_years = np.array([2024, 2025, 2026, 2027, 2028]).reshape(-1, 1)
+predictions = linear_model.predict(future_years)
+
+# Plot Linear Regression Predictions
+plt.figure(figsize=(10, 6))
+plt.plot(data['year'], data['requirement'], label='Historical Data', marker='o')
+plt.plot(future_years, predictions, label='Linear Regression Prediction', marker='o', linestyle='--')
+plt.title('Linear Regression Forecast')
+plt.xlabel('Year')
+plt.ylabel('Requirement')
+plt.legend()
+plt.grid(True)
+plt.show()
