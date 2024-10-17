@@ -1,0 +1,30 @@
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+import matplotlib.pyplot as plt
+
+# Sample data from 2012 to 2024 (you can replace with your actual data)
+data = pd.DataFrame({
+    'year': range(2012, 2025),
+    'requirement': [1000, 1100, 1050, 1150, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550, 1600]
+})
+
+# Fit ARIMA model (ARIMA(2, 0, 0))
+model = ARIMA(data['requirement'], order=(2, 0, 0))
+model_fit = model.fit()
+
+# Summary of the model
+print(model_fit.summary())
+
+# Predict future values (let's predict for the next 5 years)
+forecast = model_fit.forecast(steps=5)
+
+# Plot actual data and forecasted values
+plt.figure(figsize=(10, 6))
+plt.plot(data['year'], data['requirement'], label='Historical Data', marker='o')
+plt.plot(range(2025, 2030), forecast, label='ARIMA Forecast', marker='o', linestyle='--', color='red')
+plt.title('ARIMA(2,0,0) Forecast: Requirement')
+plt.xlabel('Year')
+plt.ylabel('Requirement')
+plt.legend()
+plt.grid(True)
+plt.show()
