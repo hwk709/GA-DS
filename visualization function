@@ -1,0 +1,95 @@
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Define the visualization function
+def visualize_data(df, x_col, y_col, category_col=None, level='L1', plot_type='line'):
+    """
+    Visualizes the given dataset using different plot types.
+    
+    Args:
+    df: Pandas DataFrame containing the dataset.
+    x_col: Column name for the x-axis.
+    y_col: Column name for the y-axis.
+    category_col: Column name to use as a category/hue (optional).
+    level: The hierarchical level being visualized.
+    plot_type: The type of plot to generate. Options: 'line', 'bar', 'box', 'scatter', 'heatmap', 'histogram'.
+    
+    Returns:
+    Displays the plot.
+    """
+    plt.figure(figsize=(10, 6))
+
+    if plot_type == 'line':
+        # Line plot (good for time series)
+        if category_col:
+            sns.lineplot(data=df, x=x_col, y=y_col, hue=category_col)
+        else:
+            sns.lineplot(data=df, x=x_col, y=y_col)
+        plt.title(f'Line Plot of {y_col} by {x_col} at {level} Level')
+        
+    elif plot_type == 'bar':
+        # Bar plot for categorical levels
+        if category_col:
+            sns.barplot(data=df, x=x_col, y=y_col, hue=category_col)
+        else:
+            sns.barplot(data=df, x=x_col, y=y_col)
+        plt.title(f'Bar Plot of {y_col} by {x_col} at {level} Level')
+        
+    elif plot_type == 'box':
+        # Box plot (for distribution visualization)
+        if category_col:
+            sns.boxplot(data=df, x=x_col, y=y_col, hue=category_col)
+        else:
+            sns.boxplot(data=df, x=x_col, y=y_col)
+        plt.title(f'Box Plot of {y_col} by {x_col} at {level} Level')
+        
+    elif plot_type == 'scatter':
+        # Scatter plot for relationship visualization
+        if category_col:
+            sns.scatterplot(data=df, x=x_col, y=y_col, hue=category_col)
+        else:
+            sns.scatterplot(data=df, x=x_col, y=y_col)
+        plt.title(f'Scatter Plot of {y_col} vs {x_col} at {level} Level')
+        
+    elif plot_type == 'heatmap':
+        # Heatmap for correlation matrix
+        sns.heatmap(df.corr(), annot=True, cmap='coolwarm', fmt='.2f')
+        plt.title(f'Heatmap of Correlations at {level} Level')
+        
+    elif plot_type == 'histogram':
+        # Histogram for distribution of a single variable
+        sns.histplot(df[y_col], kde=True, bins=20)
+        plt.title(f'Histogram of {y_col} at {level} Level')
+
+    plt.xlabel(x_col)
+    plt.ylabel(y_col)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+# Sample dataset for L1 level
+data = pd.DataFrame({
+    'year': [2020, 2020, 2021, 2021, 2022, 2022, 2023, 2023],
+    'L1': ['A', 'A', 'A', 'A', 'B', 'B', 'B', 'B'],
+    'funding': [1000, 1500, 1100, 1600, 1200, 1300, 1400, 1450],
+    'requirement': [1100, 1400, 1200, 1500, 1250, 1350, 1500, 1600]
+})
+
+# Example usage:
+# Line plot for 'funding' over 'year' at L1 level
+visualize_data(data, x_col='year', y_col='funding', category_col='L1', level='L1', plot_type='line')
+
+# Box plot for 'requirement' over 'year' at L1 level
+visualize_data(data, x_col='year', y_col='requirement', category_col='L1', level='L1', plot_type='box')
+
+# Bar plot for 'funding' over 'year' at L1 level
+visualize_data(data, x_col='year', y_col='funding', category_col='L1', level='L1', plot_type='bar')
+
+# Scatter plot for 'funding' vs 'requirement' at L1 level
+visualize_data(data, x_col='funding', y_col='requirement', category_col='L1', level='L1', plot_type='scatter')
+
+# Heatmap for correlations in the dataset at L1 level
+visualize_data(data, x_col='year', y_col='funding', level='L1', plot_type='heatmap')
+
+# Histogram for 'requirement' distribution at L1 level
+visualize_data(data, x_col='year', y_col='requirement', level='L1', plot_type='histogram')
