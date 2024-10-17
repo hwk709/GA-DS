@@ -1,0 +1,91 @@
+To apply Gradient Boosting and K-Nearest Neighbors (KNN) for modeling at the L5 level of your hierarchical dataset, I will provide you with the detailed code. This will include:
+
+Encoding (both label encoding and one-hot encoding) for categorical variables.
+Gradient Boosting Regressor for handling complex relationships.
+KNN Regressor as a non-parametric approach.
+Step 1: Prepare the Data (Including Label and One-Hot Encoding)
+python
+Copy code
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.model_selection import train_test_split
+
+# Assuming you have your dataset structured
+# Sample structure for your dataset (replace with actual data)
+data = pd.DataFrame({
+    'year': [2020, 2021, 2022, 2023, 2020, 2021, 2022, 2023],
+    'program_code': ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D'],
+    'funding_level': [1000, 1100, 1200, 1300, 900, 950, 1050, 1100],
+    'requirement': [2000, 2200, 2400, 2600, 1800, 1900, 2100, 2300],
+    'L1_total_requirement': [10000, 11000, 12000, 13000, 9000, 9500, 10500, 11000],
+    'L2_total_requirement': [5000, 5500, 6000, 6500, 4500, 4750, 5250, 5500],
+    'L5_total_requirement': [2000, 2200, 2400, 2600, 1800, 1900, 2100, 2300]
+})
+
+# Label Encoding for 'program_code'
+label_encoder = LabelEncoder()
+data['program_code_encoded'] = label_encoder.fit_transform(data['program_code'])
+
+# One-Hot Encoding for 'program_code'
+one_hot_encoder = OneHotEncoder(sparse=False)
+encoded_columns = one_hot_encoder.fit_transform(data[['program_code']])
+encoded_df = pd.DataFrame(encoded_columns, columns=[f'program_code_{int(i)}' for i in range(encoded_columns.shape[1])])
+
+# Combine original data with one-hot encoded columns
+data = pd.concat([data, encoded_df], axis=1)
+
+# Drop the original 'program_code' as we've encoded it
+data = data.drop(columns=['program_code'])
+
+# Now you have both label and one-hot encoded variables for 'program_code'
+print(data.head())
+Step 2: Gradient Boosting Regressor for L5 Level
+We will now apply Gradient Boosting Regressor to predict requirement at the L5 level, using both the encoded variables and numerical features.
+
+python
+Copy code
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.metrics import mean_squared_error
+
+# Define features and target variable at L5 level
+X_L5 = data.drop(columns=['requirement'])  # Use all features except the target variable
+y_L5 = data['requirement']  # Target variable
+
+# Split the data into training and testing sets
+X_train_L5, X_test_L5, y_train_L5, y_test_L5 = train_test_split(X_L5, y_L5, test_size=0.2, random_state=42)
+
+# Fit Gradient Boosting Regressor
+gbr_L5 = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
+gbr_L5.fit(X_train_L5, y_train_L5)
+
+# Predictions
+y_pred_L5 = gbr_L5.predict(X_test_L5)
+
+# Model evaluation
+mse_L5 = mean_squared_error(y_test_L5, y_pred_L5)
+print(f"L5 Gradient Boosting MSE: {mse_L5}")
+Step 3: K-Nearest Neighbors (KNN) for L5 Level
+Now, we'll apply the KNN Regressor to the same L5 level data. KNN is a non-parametric method that makes predictions based on the closest training data points in the feature space.
+
+python
+Copy code
+from sklearn.neighbors import KNeighborsRegressor
+
+# Fit KNN Regressor
+knn_L5 = KNeighborsRegressor(n_neighbors=5)
+knn_L5.fit(X_train_L5, y_train_L5)
+
+# Predictions
+y_pred_knn_L5 = knn_L5.predict(X_test_L5)
+
+# Model evaluation
+mse_knn_L5 = mean_squared_error(y_test_L5, y_pred_knn_L5)
+print(f"L5 KNN MSE: {mse_knn_L5}")
+Summary of the Workflow:
+Label Encoding and One-Hot Encoding are applied to categorical variables (like program_code).
+Gradient Boosting Regressor is applied at the L5 level, and its performance is measured using Mean Squared Error (MSE).
+K-Nearest Neighbors Regressor (KNN) is also applied at the L5 level, and its performance is evaluated similarly.
+Notes:
+Hyperparameter Tuning: You can tune the number of neighbors in KNN (n_neighbors) and learning rate, number of estimators, and other hyperparameters in Gradient Boosting for better performance.
+EDA for Each Level: As discussed earlier, you should conduct exploratory data analysis (EDA) at each level to better understand the relationships and correlations between variables.
+Would you like to proceed with a specific part of the modeling or further fine-tune the approaches for Gradient Boosting and KNN?
