@@ -1,0 +1,21 @@
+# Define features for L3 (including higher-level features, e.g., aggregated totals)
+X_L3 = data[['year', 'L1_total_requirement', 'L2_total_requirement', 'L3_total_requirement']]
+
+# Include encoded features
+X_L3 = pd.concat([X_L3, encoded_df], axis=1)
+
+y_L3 = data['requirement']  # Target variable
+
+# Split the data into training and testing sets
+X_train_L3, X_test_L3, y_train_L3, y_test_L3 = train_test_split(X_L3, y_L3, test_size=0.2, random_state=42)
+
+# Fit Random Forest Regressor
+rf_L3 = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_L3.fit(X_train_L3, y_train_L3)
+
+# Predictions
+y_pred_L3 = rf_L3.predict(X_test_L3)
+
+# Model evaluation
+mse_L3 = mean_squared_error(y_test_L3, y_pred_L3)
+print(f"L3 MSE: {mse_L3}")
