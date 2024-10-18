@@ -1,0 +1,71 @@
+import pandas as pd
+
+# Sample DataFrame structure (assuming you already have this in 'data')
+# data = pd.DataFrame({
+#     'year': [...],
+#     'L1_identifier': [...],
+#     'L2_identifier': [...],
+#     'L3_identifier': [...],
+#     'L4_identifier': [...],
+#     'L5_identifier': [...],
+#     'L6_identifier': [...],
+#     'requirement': [...]
+# })
+
+# 1. Aggregation for L0 level (grouped by just year)
+L0_agg = data.groupby(['year'])['requirement'].sum().reset_index()
+L0_agg.rename(columns={'requirement': 'L0_total_requirement'}, inplace=True)
+
+# Compute the lag for L0 (shift based on the year)
+L0_agg['L0_lag_requirement'] = L0_agg['L0_total_requirement'].shift(1)
+
+# Merge the L0 totals and lag back to the original data
+data = pd.merge(data, L0_agg[['year', 'L0_total_requirement', 'L0_lag_requirement']], on='year', how='left')
+
+# Impute L0 lag values (choose your imputation strategy here)
+data['L0_lag_requirement'].fillna(method='ffill', inplace=True)  # Forward fill example
+
+# 2. Aggregation and merging for L1 level
+L1_agg = data.groupby(['year', 'L1_identifier'])['L0_total_requirement'].sum().reset_index()
+L1_agg.rename(columns={'L0_total_requirement': 'L1_total_requirement'}, inplace=True)
+
+# Compute the lag for L1
+L1_agg['L1_lag_requirement'] = L1_agg.groupby(['L1_identifier'])['L1_total_requirement'].shift(1)
+
+# Merge the L1 totals and lag back to the original data
+data = pd.merge(data, L1_agg[['year', 'L1_identifier', 'L1_total_requirement', 'L1_lag_requirement']], on=['year', 'L1_identifier'], how='left')
+
+# Impute L1 lag values (another strategy - fill with zero as an example)
+data['L1_lag_requirement'].fillna(0, inplace=True)
+
+# 3. Aggregation and merging for L2 level
+L2_agg = data.groupby(['year', 'L1_identifier', 'L2_identifier'])['L1_total_requirement'].sum().reset_index()
+L2_agg.rename(columns={'L1_total_requirement': 'L2_total_requirement'}, inplace=True)
+
+# Compute the lag for L2
+L2_agg['L2_lag_requirement'] = L2_agg.groupby(['L2_identifier'])['L2_total_requirement'].shift(1)
+
+# Merge the L2 totals and lag back to the original data
+data = pd.merge(data, L2_agg[['year', 'L1_identifier', 'L2_identifier', 'L2_total_requirement', 'L2_lag_requirement']], on=['year', 'L1_identifier', 'L2_identifier'], how='left')
+
+# Impute L2 lag values (using mean imputation as an example)
+mean_l2_lag = data['L2_lag_requirement'].mean()
+data['L2_lag_requirement'].fillna(mean_l2_lag, inplace=True)
+
+# Repeat for L3 to L6 levels using appropriate grouping, lagging, merging, and imputation
+# 4. Aggregation and merging for L3 level
+L3_agg = data.groupby(['year', 'L1_identifier', 'L2_identifier', 'L3_identifier'])['L2_total_requirement'].sum().reset_index()
+L3_agg.rename(columns={'L2_total_requirement': 'L3_total_requirement'}, inplace=True)
+
+# Compute the lag for L3
+L3_agg['L3_lag_requirement'] = L3_agg.groupby(['L3_identifier'])['L3_total_requirement'].shift(1)
+
+# Merge the L3 totals and lag back to the original data
+data = pd.merge(data, L3_agg[['year', 'L1_identifier', 'L2_identifier', 'L3_identifier', 'L3_total_requirement', 'L3_lag_requirement']], on=['year', 'L1_identifier', 'L2_identifier', 'L3_identifier'], how='left')
+
+# Impute L3 lag values (forward fill example)
+data['L3_lag_requirement'].fillna(method='ffill', inplace=True)
+
+# Continue for L4 to L6...
+
+# Note: Customize the imputation strategy for each level based on your data and domain knowledge.
