@@ -1,0 +1,97 @@
+import pandas as pd
+
+# Sample data (assuming your DataFrame is called 'data' and has columns like 'year', 'L1_identifier', ..., 'L6_identifier', 'requirement', and 'current_funding')
+# data = pd.read_csv('your_dataset.csv')
+
+# 1. Aggregation for L0 level (grouped by just year)
+L0_agg = data.groupby('year').agg(
+    L0_total_requirement=('requirement', 'sum'),
+    L0_total_current_funding=('current_funding', 'sum')
+).reset_index()
+
+# Compute the lag for L0
+L0_agg['L0_lag_requirement'] = L0_agg['L0_total_requirement'].shift(1)
+L0_agg['L0_lag_current_funding'] = L0_agg['L0_total_current_funding'].shift(1)
+
+# Merge L0 totals and lag values back to the original data
+data = pd.merge(data, L0_agg, on=['year'], how='left')
+
+# 2. Aggregation for L1 level (grouped by year and L1 identifier)
+L1_agg = data.groupby(['year', 'L1_identifier']).agg(
+    L1_total_requirement=('requirement', 'sum'),
+    L1_total_current_funding=('current_funding', 'sum')
+).reset_index()
+
+# Compute the lag for L1
+L1_agg['L1_lag_requirement'] = L1_agg.groupby('L1_identifier')['L1_total_requirement'].shift(1)
+L1_agg['L1_lag_current_funding'] = L1_agg.groupby('L1_identifier')['L1_total_current_funding'].shift(1)
+
+# Merge L1 totals, L1 lag, and L0 lag values back to the original data
+data = pd.merge(data, L1_agg, on=['year', 'L1_identifier'], how='left')
+
+# 3. Aggregation for L2 level (grouped by year, L1, and L2 identifiers)
+L2_agg = data.groupby(['year', 'L1_identifier', 'L2_identifier']).agg(
+    L2_total_requirement=('requirement', 'sum'),
+    L2_total_current_funding=('current_funding', 'sum')
+).reset_index()
+
+# Compute the lag for L2
+L2_agg['L2_lag_requirement'] = L2_agg.groupby(['L1_identifier', 'L2_identifier'])['L2_total_requirement'].shift(1)
+L2_agg['L2_lag_current_funding'] = L2_agg.groupby(['L1_identifier', 'L2_identifier'])['L2_total_current_funding'].shift(1)
+
+# Merge L2 totals, L2 lag, and previous lags (L0, L1) back to the original data
+data = pd.merge(data, L2_agg, on=['year', 'L1_identifier', 'L2_identifier'], how='left')
+
+# 4. Aggregation for L3 level (grouped by year, L1, L2, and L3 identifiers)
+L3_agg = data.groupby(['year', 'L1_identifier', 'L2_identifier', 'L3_identifier']).agg(
+    L3_total_requirement=('requirement', 'sum'),
+    L3_total_current_funding=('current_funding', 'sum')
+).reset_index()
+
+# Compute the lag for L3
+L3_agg['L3_lag_requirement'] = L3_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier'])['L3_total_requirement'].shift(1)
+L3_agg['L3_lag_current_funding'] = L3_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier'])['L3_total_current_funding'].shift(1)
+
+# Merge L3 totals, L3 lag, and all previous lags (L0, L1, L2) back to the original data
+data = pd.merge(data, L3_agg, on=['year', 'L1_identifier', 'L2_identifier', 'L3_identifier'], how='left')
+
+# 5. Aggregation for L4 level (grouped by year, L1, L2, L3, and L4 identifiers)
+L4_agg = data.groupby(['year', 'L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier']).agg(
+    L4_total_requirement=('requirement', 'sum'),
+    L4_total_current_funding=('current_funding', 'sum')
+).reset_index()
+
+# Compute the lag for L4
+L4_agg['L4_lag_requirement'] = L4_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier'])['L4_total_requirement'].shift(1)
+L4_agg['L4_lag_current_funding'] = L4_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier'])['L4_total_current_funding'].shift(1)
+
+# Merge L4 totals, L4 lag, and all previous lags (L0, L1, L2, L3) back to the original data
+data = pd.merge(data, L4_agg, on=['year', 'L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier'], how='left')
+
+# 6. Aggregation for L5 level (grouped by year, L1, L2, L3, L4, and L5 identifiers)
+L5_agg = data.groupby(['year', 'L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier']).agg(
+    L5_total_requirement=('requirement', 'sum'),
+    L5_total_current_funding=('current_funding', 'sum')
+).reset_index()
+
+# Compute the lag for L5
+L5_agg['L5_lag_requirement'] = L5_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier'])['L5_total_requirement'].shift(1)
+L5_agg['L5_lag_current_funding'] = L5_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier'])['L5_total_current_funding'].shift(1)
+
+# Merge L5 totals, L5 lag, and all previous lags (L0, L1, L2, L3, L4) back to the original data
+data = pd.merge(data, L5_agg, on=['year', 'L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier'], how='left')
+
+# 7. Aggregation for L6 level (grouped by year, L1, L2, L3, L4, L5, and L6 identifiers)
+L6_agg = data.groupby(['year', 'L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier', 'L6_identifier']).agg(
+    L6_total_requirement=('requirement', 'sum'),
+    L6_total_current_funding=('current_funding', 'sum')
+).reset_index()
+
+# Compute the lag for L6
+L6_agg['L6_lag_requirement'] = L6_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier', 'L6_identifier'])['L6_total_requirement'].shift(1)
+L6_agg['L6_lag_current_funding'] = L6_agg.groupby(['L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier', 'L6_identifier'])['L6_total_current_funding'].shift(1)
+
+# Merge L6 totals, L6 lag, and all previous lags (L0, L1, L2, L3, L4, L5) back to the original data
+data = pd.merge(data, L6_agg, on=['year', 'L1_identifier', 'L2_identifier', 'L3_identifier', 'L4_identifier', 'L5_identifier', 'L6_identifier'], how='left')
+
+# Final dataset now contains aggregated totals and lag values from L0 through L6, with each level incorporating previous levels' lags
