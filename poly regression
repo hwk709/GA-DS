@@ -1,0 +1,40 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+
+# Sample data (assuming you have this loaded in a DataFrame called 'data')
+# data = pd.read_csv('your_dataset.csv')
+
+# 1. Aggregation for L0 level (grouped by just year)
+L0_agg = data.groupby('year')['requirement'].sum().reset_index()
+L0_agg.rename(columns={'requirement': 'L0_total_requirement'}, inplace=True)
+
+# Prepare the input (X) and output (y) for polynomial regression
+X = L0_agg[['year']].values  # Input variable: year
+y = L0_agg['L0_total_requirement'].values  # Output variable: L0 total requirement
+
+# 2. Transform the input to polynomial features (degree 2 for quadratic, can be adjusted)
+degree = 2  # You can adjust the degree for more complex curves (e.g., 3 for cubic)
+poly = PolynomialFeatures(degree=degree)
+X_poly = poly.fit_transform(X)
+
+# 3. Fit the polynomial regression model
+model = LinearRegression()
+model.fit(X_poly, y)
+
+# 4. Predict values (including future years)
+future_years = np.array([[year] for year in range(L0_agg['year'].min(), L0_agg['year'].max() + 6)])
+future_years_poly = poly.transform(future_years)
+predictions = model.predict(future_years_poly)
+
+# 5. Visualize the results
+plt.figure(figsize=(10, 6))
+plt.scatter(X, y, color='blue', label='Original Data')  # Original data points
+plt.plot(future_years, predictions, color='red', label=f'Polynomial Regression (degree={degree})')  # Polynomial regression curve
+plt.title('Polynomial Regression at L0 Level')
+plt.xlabel('Year')
+plt.ylabel('L0 Total Requirement')
+plt.legend()
+plt.show()
