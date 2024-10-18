@@ -1,0 +1,73 @@
+Adjusted Hierarchical Modeling Approach
+1. L0 Level: Year-Level Aggregation
+Aggregation: Group by year to calculate L0_total_requirement and derive L0_lag_requirement.
+Descriptive Statistics: Calculate mean, variance, and standard deviation for yearly requirements.
+Visualization:
+Line Plot: Shows trends over time.
+ACF/PACF Plots: To check for autocorrelation and seasonality.
+Modeling:
+ARIMA: Suitable for capturing trends and autocorrelation given the year-over-year data.
+Prophet: An alternative for handling trends and external factors with yearly data.
+Features Utilized: L0_lag_requirement, mean, variance, and standard deviation of yearly requirements.
+2. L1 Level: Aggregation by Year and L1 Identifier
+Aggregation: Group by year and L1_identifier to calculate L1_total_requirement and L1_lag_requirement.
+Descriptive Statistics: Compute mean, variance, and skewness for each L1 group.
+Visualization:
+Facet Line Plots: Visualize trends in each L1 group.
+Box Plots: Show the distribution within each year for L1 groups.
+Modeling:
+ARIMA: If L1 groups show consistent patterns over time, ARIMA remains suitable.
+Random Forest Regressor: If patterns are complex and involve interactions between lagged values and statistics, Random Forest can handle non-linear relationships effectively.
+Features Utilized: L0_lag_requirement, L1_lag_requirement, mean, variance, and skewness of L1 group requirements.
+3. L2 Level: Aggregation by Year, L1, and L2 Identifier
+Aggregation: Aggregate by year, L1_identifier, and L2_identifier to calculate L2_total_requirement and L2_lag_requirement.
+Descriptive Statistics: Compute min, max, and interquartile range (IQR) for each L2 group.
+Visualization:
+Heatmaps: Show patterns over time for each L2 group.
+Trend Comparison Charts: Compare trends within L2 groups under the same L1 group.
+Modeling:
+SARIMA: If L2 groups display seasonal patterns, SARIMA is useful.
+XGBoost/Random Forest: For capturing interactions between lags and descriptive statistics, these models are effective.
+Features Utilized: L0_lag_requirement, L1_lag_requirement, L2_lag_requirement, min, max, IQR, and variance for each L2 group.
+4. L3 Level: Aggregation by Year, L1, L2, and L3 Identifier
+Aggregation: Group by year, L1_identifier, L2_identifier, and L3_identifier to calculate L3_total_requirement and L3_lag_requirement.
+Descriptive Statistics: Standard deviation, range, and coefficient of variation for each L3 group.
+Visualization:
+Cluster Analysis: Group similar L3 patterns.
+Boxen Plots: Highlight variability and outliers over time for each L3 group.
+Modeling:
+XGBoost: Effective for managing the growing complexity in interactions and relationships.
+Random Forest: Useful for interpretability and capturing feature importance if simpler models work well.
+Features Utilized: L0_lag_requirement, L1_lag_requirement, L2_lag_requirement, L3_lag_requirement, standard deviation, range, and coefficient of variation.
+5. L4 Level: Aggregation by Year, L1, L2, L3, and L4 Identifier
+Aggregation: Group by year, L1_identifier, L2_identifier, L3_identifier, and L4_identifier to calculate L4_total_requirement and L4_lag_requirement.
+Descriptive Statistics: Median, percentiles, and kurtosis for each L4 group.
+Visualization:
+Time Series Decomposition: Decompose into trend and residual components.
+Correlation Heatmap: Display correlations between lagged features and descriptive statistics.
+Modeling:
+XGBoost/LightGBM: Effective for handling the increasing complexity.
+Random Forest: Useful if interpretability is necessary.
+Features Utilized: L0_lag_requirement, L1_lag_requirement, ..., L4_lag_requirement, median, percentiles, and kurtosis.
+6. L5 Level: Aggregation by Year, L1 through L5 Identifier
+Aggregation: Group by year, L1_identifier, ..., L5_identifier to calculate L5_total_requirement and L5_lag_requirement.
+Descriptive Statistics: Skewness, variance, and coefficient of variation for each L5 group.
+Visualization:
+Partial Dependence Plots: Show the relationship between lagged features and predictions.
+Variable Importance Plot: Highlight influential lag features in models like XGBoost.
+Modeling:
+XGBoost/LightGBM: Suitable for complex dependencies.
+Feed-Forward Neural Networks (DNN): If relationships are complex, a simple DNN may be considered.
+Features Utilized: L0_lag_requirement, L1_lag_requirement, ..., L5_lag_requirement, skewness, variance, and coefficient of variation.
+7. L6 Level: Aggregation by Year, L1 through L6 Identifier (Most Granular)
+Aggregation: Group by year, L1_identifier, ..., L6_identifier to calculate L6_total_requirement and L6_lag_requirement.
+Descriptive Statistics: Entropy, variance, and percentiles for each L6 group.
+Visualization:
+Advanced Clustering: Group similar L6 units based on behavior using hierarchical clustering or DBSCAN.
+Trend Analysis: Compare patterns in granular data using dynamic time warping (DTW) or cross-correlation techniques.
+Modeling:
+XGBoost/CatBoost: Effective for high-dimensional, sparse data.
+Random Forest: Can be simpler and interpretable if other models overfit.
+Features Utilized: L0_lag_requirement, L1_lag_requirement, ..., L6_lag_requirement, entropy, variance, and percentiles.
+Summary
+This approach uses appropriate models and methods like ARIMA, SARIMA, XGBoost, and Random Forest, adapting to the increasing complexity and granularity from L0 to L6. It avoids models like LSTM that require more granular temporal data, ensuring that yearly data and hierarchical dimensions are fully leveraged for robust and interpretable analysis.
