@@ -1,0 +1,51 @@
+[
+    # Databricks & Spark Integration
+    "databricks-mosaic", "pyspark", "pyspark.sql.functions", "pyspark.sql.types",
+    
+    # Core Spatial Libraries
+    "geopandas", "shapely", "fiona", "pyproj", "rtree", "h3", "pygeos", "rasterio",
+    
+    # Spatial File Formats and I/O
+    "gdal", "laspy", "pyshp", "fastkml", "geobuf", "geoalchemy2", "sqlalchemy",
+    "xarray", "netCDF4", "h5py", "rio-cogeo", "pyprojroot", "pyarrow",
+    
+    # Visualization Tools
+    "keplergl", "folium", "pydeck", "plotly", "matplotlib", "bokeh", "panel",
+    "holoviews", "geemap", "leafmap", "geoplot", "contextily", "descartes",
+    
+    # Geospatial Analysis & Modeling
+    "mapclassify", "libpysal", "esda", "spaghetti", "pointpats", "spopt",
+    "tobler", "pykrige", "pycno", "pyinterpolate", "scikit-learn", "scipy",
+    
+    # Geocoding, Location, Routing
+    "geopy", "osmnx", "openrouteservice", "googlemaps", "gmaps", "geocoder",
+    
+    # Remote Sensing, DEM, Terrain
+    "rasterstats", "earthpy", "pylandsat", "pyresample", "sentinelsat",
+    "satpy", "pyDEM", "xarray-spatial", "modflow", "pysheds", "hydroeval",
+    
+    # Advanced & Performance
+    "dask-geopandas", "dask", "mlflow", "joblib", "cloudpickle", "tqdm", "jsonschema",
+    
+    # NLP & Enrichment
+    "spacy", "turfpy", "topojson", "pyrosm", "urbanaccess",
+    
+    # General Scientific Stack
+    "pandas", "numpy", "requests", "pillow", "pyyaml", "json5",
+    
+    # Database & Web/Service I/O
+    "psycopg2", "pymongo", "pyodbc", "requests-cache", "aiohttp", "urllib3",
+
+    # Geometry Utilities
+    "affine", "simplekml", "svgwrite", "svgpathtools", "triangle", "sympy",
+
+    # Optional/Niche Tools
+    "rioxarray", "geocube", "zarr", "pydeck-gl", "pdal", "cartopy", "mplleaflet",
+    "mpld3", "datashader", "streamlit-folium", "streamlit-keplergl",
+    
+    # Streamlit + Dash Integration
+    "streamlit", "dash", "dash-leaflet", "dash-bootstrap-components",
+    
+    # Deep Learning + Vision (optional for EO or lidar)
+    "torch", "tensorflow", "keras", "albumentations", "opencv-python"
+]
